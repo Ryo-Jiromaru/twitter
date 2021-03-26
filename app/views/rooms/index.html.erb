@@ -1,0 +1,16 @@
+<h1>ルーム一覧</h1>
+<%= form_for @room do |r| %>
+    <div class="field">
+      <%= r.label :チャット名 %>
+      <%= r.text_field :name, :size => 40 %>
+    </div>
+    <%= r.submit "ルームを作る" %>
+  <% end %>
+
+  <% @rooms.each do |r| %>
+    <%= link_to room_path(r.id) do %>
+        <div class="rooms_box">
+            <%= r.name %>
+        </div>
+    <% end %>
+  <% end %>

@@ -1,0 +1,15 @@
+<%= link_to '新規投稿画面へ', new_tweet_path %>
+<div class="tweets_container">
+  <% @tweets.each do |t| %>
+    <div class="tweet_box">
+        <div class = tweet_user_email>
+            <%= link_to user_path(t.user.id) do %>
+                <%= t.user.email %>
+            <% end %>
+        </div>
+        <div class = tweet_body>
+            <%= t.body %>
+        </div>
+    </div>
+  <% end %>
+</div>
