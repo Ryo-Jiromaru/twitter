@@ -3,7 +3,16 @@ class TweetsController < ApplicationController
     before_action :authenticate_user!
 
     def index
-        @tweets = Tweet.all
+      #書き換える部分ここから
+      if params[:search] == nil
+        @tweets= Tweet.all
+      elsif params[:search] == ''
+        @tweets= Tweet.all
+      else
+        #部分検索
+        search = params[:search]
+        @tweets = Tweet.joins(:user).where("body LIKE ? OR name LIKE ?", "%#{search}%", "%#{search}%")
+      end
     end 
 
     def new
@@ -27,6 +36,6 @@ class TweetsController < ApplicationController
     private
 
     def tweet_params
-        params.require(:tweet).permit(:body)
+        params.require(:tweet).permit(:address, :latitude, :longitude)
     end
 end

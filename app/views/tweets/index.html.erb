@@ -1,4 +1,78 @@
 <%= link_to '新規投稿画面へ', new_tweet_path %>
+<h3>投稿を検索</h3>
+ <%= form_tag({controller:"tweets",action:"index"}, method: :get) do %>
+   <%= text_field_tag :search %>
+   <%= submit_tag '検索する'  %>
+<% end %>
+<input id="address" type="textbox" value="">
+<input type="button" value="地図を検索" onclick="codeAddress()">
+<div id="display">緯度経度が表示されるよ！</div>
+
+<div id='map'></div>
+
+<style>
+    #map {
+        height: 400px;
+        width: 400px;
+    }
+</style>
+
+<script>
+    let map
+
+    const display = document.getElementById('display')
+
+    // mapの表示関数 
+    function initMap() {
+        geocoder = new google.maps.Geocoder()
+
+        // mapの初期位置, 縮尺を定義
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {
+                lat: 35.6458437,
+                lng: 139.7046171
+            },
+            zoom: 12,
+        });
+
+        // mapsテーブルにあるそれぞれのレコードをmap上に表示 
+          <% @tweets.each do |m| %>
+            <% if m.address.present? %>
+              (function(){
+              var contentString = "住所：<%= m.address %>"; 
+
+              // マーカーを立てる
+              var marker = new google.maps.Marker({
+                  position:{lat: <%= m.latitude %>, lng: <%= m.longitude %>},
+                  map: map,
+                  title: contentString
+              });
+
+              // 情報ウィンドウ(吹き出し)の定義
+              // 投稿の詳細ページへのリンクも
+              var infowindow = new google.maps.InfoWindow({
+              position: {lat: <%= m.latitude %>, lng: <%= m.longitude %>},
+              });
+
+              // クリックしたときに情報ウィンドウを表示
+              marker.addListener('click', function() {
+              infowindow.open(map, marker);
+              });
+
+              })();
+            <% end %>
+          <% end %>
+    }
+
+    let geocoder
+</script>
+
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GOOGLE_MAP_API_KEY'] %>&callback=initMap"  
+    async defer>
+</script>
+
+
 <div class="tweets_container">
   <% @tweets.each do |t| %>
     <div class="tweet_box">
@@ -8,7 +82,8 @@
             <% end %>
         </div>
         <div class = tweet_body>
-            <%= t.body %>
+            <%= t.body %><br>
+            <%= t.address %>
         </div>
     </div>
   <% end %>
